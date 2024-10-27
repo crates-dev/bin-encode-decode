@@ -18,6 +18,6 @@ fn test_decrypt() {
         charset.push(ch);
     }
     charset.push_str("_=");
-    let encode: String = decrypt(&charset, "aab0aabLaabZaab0");
-    assert_eq!(encode, "test");
+    let encode_res: Result<String, DecryptError> = decrypt(&charset, "aab0aabLaabZaab0");
+    assert_eq!(encode_res.unwrap(), "test");
 }

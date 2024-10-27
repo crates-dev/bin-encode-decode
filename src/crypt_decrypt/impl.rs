@@ -21,9 +21,9 @@ impl<'a> CryptDecrypt<'a> {
     ///
     /// # Returns
     /// Returns `true` if `charset` contains `CHARSET_LEN` unique characters, otherwise returns `false`.
-    fn judge_charset_safe(&self) -> bool {
+    pub(crate) fn judge_charset_safe(charset: &str) -> bool {
         let mut hash_set: HashSet<char> = hash_set!();
-        for tmp_char in self.charset.chars() {
+        for tmp_char in charset.chars() {
             hash_set.insert(tmp_char);
         }
         if hash_set.len() != CHARSET_LEN {
@@ -58,10 +58,7 @@ impl<'a> CryptDecrypt<'a> {
     /// # Returns
     /// Returns a `Result` containing the encrypted `String` if successful, or a `CryptError` if the charset is invalid.
     pub fn encrypt(&self, encode_str: &str) -> Result<String, CryptError> {
-        if !self.judge_charset_safe() {
-            return Err(CryptError::CharsetError);
-        }
-        Ok(encrypt(self.charset, encode_str))
+        encrypt(self.charset, encode_str)
     }
 
     /// Decrypts a string based on the current `charset`.
@@ -72,9 +69,6 @@ impl<'a> CryptDecrypt<'a> {
     /// # Returns
     /// Returns a `Result` containing the decrypted `String` if successful, or a `DecryptError` if the charset is invalid.
     pub fn decrypt(&self, decode_str: &str) -> Result<String, DecryptError> {
-        if !self.judge_charset_safe() {
-            return Err(DecryptError::CharsetError);
-        }
-        Ok(decrypt(self.charset, decode_str))
+        decrypt(self.charset, decode_str)
     }
 }

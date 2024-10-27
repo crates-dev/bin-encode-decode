@@ -1,3 +1,4 @@
+use crate::*;
 use std_macro_extensions::*;
 
 /// Decrypts a given encoded string based on a specified charset, using 4-character
@@ -11,11 +12,7 @@ use std_macro_extensions::*;
 ///   the provided `charset`.
 ///
 /// # Returns
-/// Returns a `String` containing the decoded result. All padding characters (0s)
-/// are removed from the output before returning.
-///
-/// # Panics
-/// Panics if the decoded bytes cannot be converted to a valid UTF-8 `String`.
+/// Returns a `Result` containing the decrypted `String` if successful, or a `DecryptError` if the charset is invalid.
 ///
 /// # Example
 /// ```
@@ -24,9 +21,12 @@ use std_macro_extensions::*;
 /// let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
 /// let encoded_str = "aab0aabLaabZaab0";
 /// let decoded_str = decrypt(charset, encoded_str);
-/// assert_eq!(decoded_str, "test");
+/// assert_eq!(decoded_str.unwrap(), "test");
 /// ```
-pub fn decrypt(charset: &str, decode_str: &str) -> String {
+pub fn decrypt(charset: &str, decode_str: &str) -> Result<String, DecryptError> {
+    if !CryptDecrypt::judge_charset_safe(charset) {
+        return Err(DecryptError::CharsetError);
+    }
     let mut buffer: Vec<u8> = vector!();
     let mut decoded: Vec<u8> = vector!();
     for ch in decode_str.chars() {
@@ -44,5 +44,7 @@ pub fn decrypt(charset: &str, decode_str: &str) -> String {
             buffer.clear();
         }
     }
-    String::from_utf8(decoded.into_iter().filter(|&x| x != 0).collect()).unwrap()
+    let decode_res: String =
+        String::from_utf8(decoded.into_iter().filter(|&x| x != 0).collect()).unwrap_or_default();
+    Ok(decode_res)
 }

@@ -1,3 +1,4 @@
+use crate::*;
 use std_macro_extensions::*;
 
 /// Encodes a given input string into an encoded format using a specified character set (`charset`).
@@ -10,11 +11,7 @@ use std_macro_extensions::*;
 ///   in 3-byte chunks.
 ///
 /// # Returns
-/// Returns a `String` containing the encoded representation of `encode_str` based on `charset`.
-///
-/// # Panics
-/// Panics if an index exceeds the length of `charset`, which occurs if `charset` does not cover
-/// the entire 64-character encoding space.
+/// Returns a `Result` containing the encrypted `String` if successful, or a `CryptError` if the charset is invalid.
 ///
 /// # Example
 /// ```
@@ -23,9 +20,12 @@ use std_macro_extensions::*;
 /// let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
 /// let original_str = "test";
 /// let encoded_str = encrypt(charset, original_str);
-/// assert_eq!(encoded_str, "aab0aabLaabZaab0");
+/// assert_eq!(encoded_str.unwrap(), "aab0aabLaabZaab0");
 /// ```
-pub fn encrypt(charset: &str, encode_str: &str) -> String {
+pub fn encrypt(charset: &str, encode_str: &str) -> Result<String, CryptError> {
+    if !CryptDecrypt::judge_charset_safe(charset) {
+        return Err(CryptError::CharsetError);
+    }
     let mut result: String = string!();
     let mut buffer: Vec<u8> = vector!();
     for &byte in encode_str.as_bytes() {
@@ -36,8 +36,8 @@ pub fn encrypt(charset: &str, encode_str: &str) -> String {
             ((chunk[0] as usize) << 16) | ((chunk[1] as usize) << 8) | (chunk[2] as usize);
         for i in (0..4).rev() {
             let idx: usize = (combined >> (i * 6)) & 0b111111;
-            result.push(charset.chars().nth(idx).unwrap());
+            result.push(charset.chars().nth(idx).unwrap_or_default());
         }
     }
-    result
+    Ok(result)
 }
