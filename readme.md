@@ -44,7 +44,7 @@ let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN
 let encode: Result<String, CryptError> = encrypt(&charset, test_str);
 ```
 
-### Encrypt
+### Decrypt
 
 #### Use Struct
 
@@ -54,7 +54,7 @@ let mut crypt_decrypt: CryptDecrypt<'_> = CryptDecrypt::new();
 let test_str: &str = "aab0aabLaabZaab0";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
 crypt_decrypt.set_charset(&charset);
-let decode: Result<String, CryptError> = crypt_decrypt.decrypt(test_str);
+let decode: Result<String, DecryptError> = crypt_decrypt.decrypt(test_str);
 ```
 
 #### Use Function
@@ -63,7 +63,7 @@ let decode: Result<String, CryptError> = crypt_decrypt.decrypt(test_str);
 use bin_encrypt_decrypt::*;
 let test_str: &str = "aab0aabLaabZaab0";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-let decode: Result<String, CryptError> = decrypt(&charset, test_str);
+let decode: Result<String, DecryptError> = decrypt(&charset, test_str);
 ```
 
 ## License
