@@ -3,5 +3,21 @@
 version = 3
 
 [[package]]
-name = "bin-crypt-decrypt"
+name = "bin-encrypt-decrypt"
 version = "0.1.0"
+dependencies = [
+ "ltpp-output",
+ "std-macro-extensions",
+]
+
+[[package]]
+name = "ltpp-output"
+version = "1.0.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b2dff87f1d887a9601fa2cfdae977f7af41b688b2cd12a48b9a9bc5baf098c11"
+
+[[package]]
+name = "std-macro-extensions"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0a538cb65a909a70de0dcc2ad5f9be97d84c2de9613fe4bc41719cecbca0e70"
