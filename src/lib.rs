@@ -1,5 +1,4 @@
 #![allow(warnings)]
-mod common;
 mod crypt_decrypt;
 mod decrypt;
 mod encrypt;

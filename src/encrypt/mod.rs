@@ -1,2 +1,2 @@
 pub(crate) mod cfg;
-pub mod encrypt;
+pub(crate) mod encrypt;
