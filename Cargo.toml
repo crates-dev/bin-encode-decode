@@ -1,6 +1,6 @@
 [package]
 name = "bin-encrypt-decrypt"
-version = "1.4.0"
+version = "2.0.0"
 edition = "2021"
 authors = ["ltpp-universe <root@ltpp.vip>"] 
 license = "MIT"
@@ -9,5 +9,5 @@ keywords = ["binaryencryption", "decryption", "customcharset", "highperformance"
 repository = "https://github.com/ltpp-universe/bin-crypt-decrypt"
 
 [dependencies]
-ltpp-output = "1.1.1"
-std-macro-extensions = "0.16.0"
+color-output = "4.1.0"
+std-macro-extensions = "0.17.0"

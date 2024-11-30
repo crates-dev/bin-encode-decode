@@ -39,7 +39,7 @@ impl<'a> CryptDecrypt<'a> {
     ///
     /// # Returns
     /// Returns a mutable reference to `Self` for method chaining.
-    pub fn set_charset<'b>(&mut self, charset: &'b str) -> &mut Self
+    pub fn charset<'b>(&mut self, charset: &'b str) -> &mut Self
     where
         'b: 'a,
     {

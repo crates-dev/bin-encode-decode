@@ -36,7 +36,7 @@ use bin_encrypt_decrypt::*;
 let mut crypt_decrypt: CryptDecrypt<'_> = CryptDecrypt::new();
 let test_str: &str = "test";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-crypt_decrypt.set_charset(&charset);
+crypt_decrypt.charset(&charset);
 let encode: Result<String, CryptError> = crypt_decrypt.encrypt(test_str);
 ```
 
@@ -58,7 +58,7 @@ use bin_encrypt_decrypt::*;
 let mut crypt_decrypt: CryptDecrypt<'_> = CryptDecrypt::new();
 let test_str: &str = "aab0aabLaabZaab0";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-crypt_decrypt.set_charset(&charset);
+crypt_decrypt.charset(&charset);
 let decode: Result<String, DecryptError> = crypt_decrypt.decrypt(test_str);
 ```
 

@@ -1,5 +1,5 @@
 use crate::*;
-use ltpp_output::*;
+use color_output::*;
 use std_macro_extensions::*;
 
 #[test]
@@ -20,7 +20,7 @@ fn test_crypt_decrypt() {
         charset.push(ch);
     }
     charset.push_str("_=");
-    crypt_decrypt.set_charset(&charset);
+    crypt_decrypt.charset(&charset);
     let encode: Result<String, CryptError> = crypt_decrypt.encrypt(test_str);
     let decode: Result<String, DecryptError> = crypt_decrypt.decrypt(&encode.clone().unwrap());
     let encode_str: String = encode.clone().unwrap();
@@ -28,38 +28,38 @@ fn test_crypt_decrypt() {
     OutputListBuilder::new()
         .add(
             OutputBuilder::new()
-                .set_endl(true)
-                .set_text(&format!("charset: {}", charset))
-                .set_text_bg_color(ColorType::Use(Color::Blue))
-                .set_text_color(ColorType::Use(Color::Yellow))
-                .set_text_blod(true)
+                .endl(true)
+                .text(&format!("charset: {}", charset))
+                .text_bg_color(ColorType::Use(Color::Blue))
+                .text_color(ColorType::Use(Color::Yellow))
+                .text_blod(true)
                 .build(),
         )
         .add(
             OutputBuilder::new()
-                .set_endl(true)
-                .set_text(&format!("test word: {}", test_str))
-                .set_text_bg_color(ColorType::Use(Color::Yellow))
-                .set_text_color(ColorType::Use(Color::Blue))
-                .set_text_blod(true)
+                .endl(true)
+                .text(&format!("test word: {}", test_str))
+                .text_bg_color(ColorType::Use(Color::Yellow))
+                .text_color(ColorType::Use(Color::Blue))
+                .text_blod(true)
                 .build(),
         )
         .add(
             OutputBuilder::new()
-                .set_endl(true)
-                .set_text(&format!("encode_str: {}", encode_str))
-                .set_text_bg_color(ColorType::Use(Color::Cyan))
-                .set_text_color(ColorType::Use(Color::Yellow))
-                .set_text_blod(true)
+                .endl(true)
+                .text(&format!("encode_str: {}", encode_str))
+                .text_bg_color(ColorType::Use(Color::Cyan))
+                .text_color(ColorType::Use(Color::Yellow))
+                .text_blod(true)
                 .build(),
         )
         .add(
             OutputBuilder::new()
-                .set_endl(true)
-                .set_text(&format!("decode_str: {}", decode_str))
-                .set_text_bg_color(ColorType::Use(Color::Green))
-                .set_text_color(ColorType::Use(Color::Yellow))
-                .set_text_blod(true)
+                .endl(true)
+                .text(&format!("decode_str: {}", decode_str))
+                .text_bg_color(ColorType::Use(Color::Green))
+                .text_color(ColorType::Use(Color::Yellow))
+                .text_blod(true)
                 .build(),
         )
         .run();
