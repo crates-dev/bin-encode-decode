@@ -1,5 +1,10 @@
 # bin-encrypt-decrypt
 
+[![](https://img.shields.io/crates/v/bin-encrypt-decrypt.svg)](https://crates.io/crates/bin-encrypt-decrypt)
+[![](https://docs.rs/bin-encrypt-decrypt/badge.svg)](https://docs.rs/bin-encrypt-decrypt)
+[![](https://img.shields.io/crates/l/bin-encrypt-decrypt.svg)](./LICENSE)
+[![](https://github.com/ltpp-universe/bin-encrypt-decrypt/workflows/Rust/badge.svg)](https://github.com/ltpp-universe/bin-encrypt-decrypt/actions?query=workflow:Rust)
+
 [Official Documentation](https://docs.ltpp.vip/BIN-ENCRYPT-DECRYPT/)
 
 A high-performance binary encryption and decryption library that supports customizable character sets beyond Base64.
