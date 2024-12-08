@@ -1,12 +1,13 @@
 [package]
 name = "bin-encrypt-decrypt"
-version = "2.2.0"
+version = "2.2.1"
 edition = "2021"
 authors = ["ltpp-universe <root@ltpp.vip>"] 
 license = "MIT"
 description = "A high-performance binary encryption and decryption library that supports customizable character sets beyond Base64."
 keywords = ["binaryencryption", "decryption", "customcharset", "highperformance", "base64alternative"]
 repository = "https://github.com/ltpp-universe/bin-crypt-decrypt"
+categories = ["Cryptography", "Utilities", "Security", "Encoding"]
 
 [dependencies]
 std-macro-extensions = "0.17.0"
