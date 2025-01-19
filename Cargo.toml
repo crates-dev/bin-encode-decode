@@ -1,6 +1,6 @@
 [package]
 name = "bin-encrypt-decrypt"
-version = "2.2.1"
+version = "2.2.2"
 edition = "2021"
 authors = ["ltpp-universe <root@ltpp.vip>"] 
 license = "MIT"
@@ -10,7 +10,27 @@ repository = "https://github.com/ltpp-universe/bin-crypt-decrypt"
 categories = ["cryptography", "encoding"]
 
 [dependencies]
-std-macro-extensions = "0.17.0"
+std-macro-extensions = "0.20.4"
 
 [dev-dependencies]
-color-output = "4.1.0"
+color-output = "6.1.6"
+
+[profile.dev]
+incremental = false
+opt-level = 3
+lto = true
+panic = "abort"
+debug = false
+codegen-units = 1
+strip = "debuginfo"
+backtrace = "off"
+
+[profile.release]
+incremental = false
+opt-level = 3
+lto = true
+panic = "abort"
+debug = false
+codegen-units = 1
+strip = "debuginfo"
+backtrace = "off"
