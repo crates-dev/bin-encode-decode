@@ -7,6 +7,7 @@ pub enum CryptError {
 }
 
 impl fmt::Display for CryptError {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             CryptError::CharsetError => write!(f, "CryptError: Charset is invalid. Please ensure the charset contains exactly {} unique characters.",CHARSET_LEN ),
@@ -20,6 +21,7 @@ pub enum DecryptError {
 }
 
 impl fmt::Display for DecryptError {
+    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             DecryptError::CharsetError => write!(f, "CryptError: Charset is invalid. Please ensure the charset contains exactly {} unique characters.", CHARSET_LEN),

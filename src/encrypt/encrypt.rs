@@ -22,6 +22,7 @@ use std_macro_extensions::*;
 /// let encoded_str = encrypt(charset, original_str);
 /// assert_eq!(encoded_str.unwrap(), "aab0aabLaabZaab0");
 /// ```
+#[inline]
 pub fn encrypt(charset: &str, encode_str: &str) -> Result<String, CryptError> {
     if !CryptDecrypt::judge_charset_safe(charset) {
         return Err(CryptError::CharsetError);

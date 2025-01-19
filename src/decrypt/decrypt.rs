@@ -23,6 +23,7 @@ use std_macro_extensions::*;
 /// let decoded_str = decrypt(charset, encoded_str);
 /// assert_eq!(decoded_str.unwrap(), "test");
 /// ```
+#[inline]
 pub fn decrypt(charset: &str, decode_str: &str) -> Result<String, DecryptError> {
     if !CryptDecrypt::judge_charset_safe(charset) {
         return Err(DecryptError::CharsetError);

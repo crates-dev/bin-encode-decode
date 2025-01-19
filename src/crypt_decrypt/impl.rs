@@ -6,6 +6,7 @@ use crate::encrypt::encrypt::encrypt;
 use std_macro_extensions::*;
 
 impl<'a> Default for CryptDecrypt<'a> {
+    #[inline]
     fn default() -> Self {
         CryptDecrypt { charset: "" }
     }
@@ -13,6 +14,7 @@ impl<'a> Default for CryptDecrypt<'a> {
 
 impl<'a> CryptDecrypt<'a> {
     /// Creates a new instance of `CryptDecrypt` with a default charset.
+    #[inline]
     pub fn new() -> Self {
         CryptDecrypt::default()
     }
@@ -21,6 +23,7 @@ impl<'a> CryptDecrypt<'a> {
     ///
     /// # Returns
     /// Returns `true` if `charset` contains `CHARSET_LEN` unique characters, otherwise returns `false`.
+    #[inline]
     pub(crate) fn judge_charset_safe(charset: &str) -> bool {
         let mut hash_set: HashSet<char> = hash_set!();
         for tmp_char in charset.chars() {
@@ -39,6 +42,7 @@ impl<'a> CryptDecrypt<'a> {
     ///
     /// # Returns
     /// Returns a mutable reference to `Self` for method chaining.
+    #[inline]
     pub fn charset<'b>(&mut self, charset: &'b str) -> &mut Self
     where
         'b: 'a,
@@ -57,6 +61,7 @@ impl<'a> CryptDecrypt<'a> {
     ///
     /// # Returns
     /// Returns a `Result` containing the encrypted `String` if successful, or a `CryptError` if the charset is invalid.
+    #[inline]
     pub fn encrypt(&self, encode_str: &str) -> Result<String, CryptError> {
         encrypt(self.charset, encode_str)
     }
@@ -68,6 +73,7 @@ impl<'a> CryptDecrypt<'a> {
     ///
     /// # Returns
     /// Returns a `Result` containing the decrypted `String` if successful, or a `DecryptError` if the charset is invalid.
+    #[inline]
     pub fn decrypt(&self, decode_str: &str) -> Result<String, DecryptError> {
         decrypt(self.charset, decode_str)
     }
