@@ -30,36 +30,36 @@ fn test_crypt_decrypt() {
             OutputBuilder::new()
                 .endl(true)
                 .text(&format!("charset: {}", charset))
-                .text_bg_color(ColorType::Use(Color::Blue))
-                .text_color(ColorType::Use(Color::Yellow))
-                .text_blod(true)
+                .bg_color(ColorType::Use(Color::Blue))
+                .color(ColorType::Use(Color::Yellow))
+                .blod(true)
                 .build(),
         )
         .add(
             OutputBuilder::new()
                 .endl(true)
                 .text(&format!("test word: {}", test_str))
-                .text_bg_color(ColorType::Use(Color::Yellow))
-                .text_color(ColorType::Use(Color::Blue))
-                .text_blod(true)
+                .bg_color(ColorType::Use(Color::Yellow))
+                .color(ColorType::Use(Color::Blue))
+                .blod(true)
                 .build(),
         )
         .add(
             OutputBuilder::new()
                 .endl(true)
                 .text(&format!("encode_str: {}", encode_str))
-                .text_bg_color(ColorType::Use(Color::Cyan))
-                .text_color(ColorType::Use(Color::Yellow))
-                .text_blod(true)
+                .bg_color(ColorType::Use(Color::Cyan))
+                .color(ColorType::Use(Color::Yellow))
+                .blod(true)
                 .build(),
         )
         .add(
             OutputBuilder::new()
                 .endl(true)
                 .text(&format!("decode_str: {}", decode_str))
-                .text_bg_color(ColorType::Use(Color::Green))
-                .text_color(ColorType::Use(Color::Yellow))
-                .text_blod(true)
+                .bg_color(ColorType::Use(Color::Green))
+                .color(ColorType::Use(Color::Yellow))
+                .blod(true)
                 .build(),
         )
         .run();
