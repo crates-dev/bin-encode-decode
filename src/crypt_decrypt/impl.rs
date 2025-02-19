@@ -1,9 +1,4 @@
-use super::error::{CryptError, DecryptError};
-use super::r#static::CHARSET_LEN;
-use super::r#type::CryptDecrypt;
-use crate::decrypt::decrypt::decrypt;
-use crate::encrypt::encrypt::encrypt;
-use std_macro_extensions::*;
+use crate::*;
 
 impl<'a> Default for CryptDecrypt<'a> {
     #[inline]
@@ -25,7 +20,7 @@ impl<'a> CryptDecrypt<'a> {
     /// Returns `true` if `charset` contains `CHARSET_LEN` unique characters, otherwise returns `false`.
     #[inline]
     pub(crate) fn judge_charset_safe(charset: &str) -> bool {
-        let mut hash_set: HashSet<char> = hash_set!();
+        let mut hash_set: HashSet<char> = HashSet::new();
         for tmp_char in charset.chars() {
             hash_set.insert(tmp_char);
         }

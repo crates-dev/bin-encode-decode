@@ -1,5 +1,4 @@
 use crate::*;
-use std_macro_extensions::*;
 
 /// Encodes a given input string into an encoded format using a specified character set (`charset`).
 /// This function groups bytes in chunks of 3 and maps them into 4-character segments based on `charset`.
@@ -27,8 +26,8 @@ pub fn encrypt(charset: &str, encode_str: &str) -> Result<String, CryptError> {
     if !CryptDecrypt::judge_charset_safe(charset) {
         return Err(CryptError::CharsetError);
     }
-    let mut result: String = string!();
-    let mut buffer: Vec<u8> = vector!();
+    let mut result: String = String::new();
+    let mut buffer: Vec<u8> = Vec::new();
     for &byte in encode_str.as_bytes() {
         buffer.extend_from_slice(&[0, 0, byte]);
     }

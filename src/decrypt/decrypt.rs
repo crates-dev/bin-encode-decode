@@ -1,5 +1,4 @@
 use crate::*;
-use std_macro_extensions::*;
 
 /// Decrypts a given encoded string based on a specified charset, using 4-character
 /// groups to restore the original bytes. Each character in the `decode_str` string
@@ -28,8 +27,8 @@ pub fn decrypt(charset: &str, decode_str: &str) -> Result<String, DecryptError> 
     if !CryptDecrypt::judge_charset_safe(charset) {
         return Err(DecryptError::CharsetError);
     }
-    let mut buffer: Vec<u8> = vector!();
-    let mut decoded: Vec<u8> = vector!();
+    let mut buffer: Vec<u8> = Vec::new();
+    let mut decoded: Vec<u8> = Vec::new();
     for ch in decode_str.chars() {
         if let Some(idx) = charset.chars().position(|c| c == ch) {
             buffer.push(idx as u8);

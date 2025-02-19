@@ -4,20 +4,4 @@ version = 4
 
 [[package]]
 name = "bin-encrypt-decrypt"
-version = "2.2.8"
-dependencies = [
- "color-output",
- "std-macro-extensions",
-]
-
-[[package]]
-name = "color-output"
-version = "6.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d641a3a8617977a6612e52206fa673bae5e248f2764868453cf1eb0ed8d4e98a"
-
-[[package]]
-name = "std-macro-extensions"
-version = "0.21.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "723e95168fe3231183f108f3f3418afe93b182bab9d39b907594c013e5e9fa02"
+version = "2.2.9"

@@ -1,10 +1,8 @@
 use crate::*;
-use std_macro_extensions::*;
 
 #[test]
 fn test_decrypt() {
-    let test_str: &str = "test";
-    let mut charset: String = string!("");
+    let mut charset: String = String::new();
     for i in 0..26 {
         let ch: char = ('a' as u8 + i) as char;
         charset.push(ch);

@@ -1,1 +1,1 @@
-pub(super) static CHARSET_LEN: usize = 64;
+pub static CHARSET_LEN: usize = 64;

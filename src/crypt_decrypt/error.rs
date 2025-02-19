@@ -1,5 +1,4 @@
-use super::r#static::CHARSET_LEN;
-use std::fmt;
+use crate::*;
 
 #[derive(Debug, Clone)]
 pub enum CryptError {
