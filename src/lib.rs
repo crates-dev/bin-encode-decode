@@ -1,13 +1,13 @@
-mod crypt_decrypt;
-mod decrypt;
-mod encrypt;
+pub(crate) mod common;
+pub(crate) mod decode;
+pub(crate) mod encode;
 
-pub use crypt_decrypt::{
-    error::{CryptError, DecryptError},
-    r#type::CryptDecrypt,
+pub use common::{
+    error::{DecodeError, EncodeError},
+    r#type::Endecode,
 };
-pub use decrypt::decrypt::decrypt;
-pub use encrypt::encrypt::encrypt;
+pub use decode::func::*;
+pub use encode::func::*;
 
-pub(crate) use crypt_decrypt::r#static::*;
+pub(crate) use common::r#static::*;
 pub(crate) use std::{collections::HashSet, fmt};

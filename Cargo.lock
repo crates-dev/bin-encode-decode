@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "bin-encrypt-decrypt"
-version = "2.2.9"
+name = "bin-encode-decode"
+version = "0.0.1"

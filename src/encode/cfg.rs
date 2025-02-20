@@ -1,7 +1,7 @@
 use crate::*;
 
 #[test]
-fn test_decrypt() {
+fn test_decode() {
     let mut charset: String = String::new();
     for i in 0..26 {
         let ch: char = ('a' as u8 + i) as char;
@@ -16,6 +16,6 @@ fn test_decrypt() {
         charset.push(ch);
     }
     charset.push_str("_=");
-    let encode_res: Result<String, CryptError> = encrypt(&charset, "test");
+    let encode_res: Result<String, EncodeError> = encode(&charset, "test");
     assert_eq!(encode_res.unwrap(), "aab0aabLaabZaab0");
 }

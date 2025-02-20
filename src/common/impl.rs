@@ -1,17 +1,17 @@
 use crate::*;
 
-impl<'a> Default for CryptDecrypt<'a> {
+impl<'a> Default for Endecode<'a> {
     #[inline]
     fn default() -> Self {
-        CryptDecrypt { charset: "" }
+        Endecode { charset: "" }
     }
 }
 
-impl<'a> CryptDecrypt<'a> {
-    /// Creates a new instance of `CryptDecrypt` with a default charset.
+impl<'a> Endecode<'a> {
+    /// Creates a new instance of `Endecode` with a default charset.
     #[inline]
     pub fn new() -> Self {
-        CryptDecrypt::default()
+        Endecode::default()
     }
 
     /// Checks if the `charset` contains `CHARSET_LEN` unique characters.
@@ -30,7 +30,7 @@ impl<'a> CryptDecrypt<'a> {
         true
     }
 
-    /// Sets the `charset` for the current `CryptDecrypt` instance, if it is not already set.
+    /// Sets the `charset` for the current `Endecode` instance, if it is not already set.
     ///
     /// # Parameters
     /// - `charset`: A string slice representing the charset to be used.
@@ -42,34 +42,34 @@ impl<'a> CryptDecrypt<'a> {
     where
         'b: 'a,
     {
-        if self.charset != CryptDecrypt::default().charset {
+        if self.charset != Endecode::default().charset {
             return self;
         }
         self.charset = charset;
         self
     }
 
-    /// Encrypts a string based on the current `charset`.
+    /// encodes a string based on the current `charset`.
     ///
     /// # Parameters
-    /// - `encode_str`: The string slice to be encrypted.
+    /// - `encode_str`: The string slice to be encodeed.
     ///
     /// # Returns
-    /// Returns a `Result` containing the encrypted `String` if successful, or a `CryptError` if the charset is invalid.
+    /// Returns a `Result` containing the encodeed `String` if successful, or a `EncodeError` if the charset is invalid.
     #[inline]
-    pub fn encrypt(&self, encode_str: &str) -> Result<String, CryptError> {
-        encrypt(self.charset, encode_str)
+    pub fn encode(&self, encode_str: &str) -> Result<String, EncodeError> {
+        encode(self.charset, encode_str)
     }
 
-    /// Decrypts a string based on the current `charset`.
+    /// decodes a string based on the current `charset`.
     ///
     /// # Parameters
-    /// - `decode_str`: The string slice to be decrypted.
+    /// - `decode_str`: The string slice to be decodeed.
     ///
     /// # Returns
-    /// Returns a `Result` containing the decrypted `String` if successful, or a `DecryptError` if the charset is invalid.
+    /// Returns a `Result` containing the decodeed `String` if successful, or a `DecodeError` if the charset is invalid.
     #[inline]
-    pub fn decrypt(&self, decode_str: &str) -> Result<String, DecryptError> {
-        decrypt(self.charset, decode_str)
+    pub fn decode(&self, decode_str: &str) -> Result<String, DecodeError> {
+        decode(self.charset, decode_str)
     }
 }

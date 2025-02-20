@@ -1,6 +1,6 @@
 use crate::*;
 
-/// Decrypts a given encoded string based on a specified charset, using 4-character
+/// decodes a given encoded string based on a specified charset, using 4-character
 /// groups to restore the original bytes. Each character in the `decode_str` string
 /// is mapped to an index in `charset` to form the decoded bytes.
 ///
@@ -11,21 +11,21 @@ use crate::*;
 ///   the provided `charset`.
 ///
 /// # Returns
-/// Returns a `Result` containing the decrypted `String` if successful, or a `DecryptError` if the charset is invalid.
+/// Returns a `Result` containing the decodeed `String` if successful, or a `DecodeError` if the charset is invalid.
 ///
 /// # Example
 /// ```
-/// use bin_encrypt_decrypt::*;
+/// use bin_encode_decode::*;
 ///
 /// let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
 /// let encoded_str = "aab0aabLaabZaab0";
-/// let decoded_str = decrypt(charset, encoded_str);
+/// let decoded_str = decode(charset, encoded_str);
 /// assert_eq!(decoded_str.unwrap(), "test");
 /// ```
 #[inline]
-pub fn decrypt(charset: &str, decode_str: &str) -> Result<String, DecryptError> {
-    if !CryptDecrypt::judge_charset_safe(charset) {
-        return Err(DecryptError::CharsetError);
+pub fn decode(charset: &str, decode_str: &str) -> Result<String, DecodeError> {
+    if !Endecode::judge_charset_safe(charset) {
+        return Err(DecodeError::CharsetError);
     }
     let mut buffer: Vec<u8> = Vec::new();
     let mut decoded: Vec<u8> = Vec::new();

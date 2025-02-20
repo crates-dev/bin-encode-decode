@@ -1,8 +1,8 @@
 use crate::*;
 
 #[test]
-fn test_crypt_decrypt() {
-    let mut crypt_decrypt: CryptDecrypt<'_> = CryptDecrypt::new();
+fn test_crypt_decode() {
+    let mut en_decode: Endecode<'_> = Endecode::new();
     let test_str: &str = "test";
     let mut charset: String = String::new();
     for i in 0..26 {
@@ -18,8 +18,8 @@ fn test_crypt_decrypt() {
         charset.push(ch);
     }
     charset.push_str("_=");
-    crypt_decrypt.charset(&charset);
-    let encode: Result<String, CryptError> = crypt_decrypt.encrypt(test_str);
-    let decode: Result<String, DecryptError> = crypt_decrypt.decrypt(&encode.clone().unwrap());
+    en_decode.charset(&charset);
+    let encode: Result<String, EncodeError> = en_decode.encode(test_str);
+    let decode: Result<String, DecodeError> = en_decode.decode(&encode.clone().unwrap());
     assert_eq!(decode.unwrap(), test_str);
 }
