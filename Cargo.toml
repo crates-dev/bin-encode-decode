@@ -1,6 +1,6 @@
 [package]
 name = "bin-encode-decode"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 authors = ["ltpp-universe <root@ltpp.vip>"] 
 license = "MIT"
@@ -17,7 +17,6 @@ panic = "unwind"
 debug = false
 codegen-units = 1
 strip = "debuginfo"
-backtrace = "off"
 
 [profile.release]
 incremental = false
@@ -27,4 +26,3 @@ panic = "unwind"
 debug = false
 codegen-units = 1
 strip = "debuginfo"
-backtrace = "off"
