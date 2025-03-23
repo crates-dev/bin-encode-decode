@@ -1,7 +1,6 @@
 use crate::*;
 
 impl<'a> Default for Endecode<'a> {
-    #[inline]
     fn default() -> Self {
         Endecode { charset: "" }
     }
@@ -9,7 +8,6 @@ impl<'a> Default for Endecode<'a> {
 
 impl<'a> Endecode<'a> {
     /// Creates a new instance of `Endecode` with a default charset.
-    #[inline]
     pub fn new() -> Self {
         Endecode::default()
     }
@@ -18,7 +16,6 @@ impl<'a> Endecode<'a> {
     ///
     /// # Returns
     /// Returns `true` if `charset` contains `CHARSET_LEN` unique characters, otherwise returns `false`.
-    #[inline]
     pub(crate) fn judge_charset_safe(charset: &str) -> bool {
         let mut hash_set: HashSet<char> = HashSet::new();
         for tmp_char in charset.chars() {
@@ -37,7 +34,6 @@ impl<'a> Endecode<'a> {
     ///
     /// # Returns
     /// Returns a mutable reference to `Self` for method chaining.
-    #[inline]
     pub fn charset<'b>(&mut self, charset: &'b str) -> &mut Self
     where
         'b: 'a,
@@ -52,11 +48,10 @@ impl<'a> Endecode<'a> {
     /// encodes a string based on the current `charset`.
     ///
     /// # Parameters
-    /// - `encode_str`: The string slice to be encodeed.
+    /// - `encode_str`: The string slice to be encoded.
     ///
     /// # Returns
-    /// Returns a `Result` containing the encodeed `String` if successful, or a `EncodeError` if the charset is invalid.
-    #[inline]
+    /// Returns a `Result` containing the encoded `String` if successful, or a `EncodeError` if the charset is invalid.
     pub fn encode(&self, encode_str: &str) -> Result<String, EncodeError> {
         encode(self.charset, encode_str)
     }
@@ -64,11 +59,10 @@ impl<'a> Endecode<'a> {
     /// decodes a string based on the current `charset`.
     ///
     /// # Parameters
-    /// - `decode_str`: The string slice to be decodeed.
+    /// - `decode_str`: The string slice to be decoded.
     ///
     /// # Returns
-    /// Returns a `Result` containing the decodeed `String` if successful, or a `DecodeError` if the charset is invalid.
-    #[inline]
+    /// Returns a `Result` containing the decoded `String` if successful, or a `DecodeError` if the charset is invalid.
     pub fn decode(&self, decode_str: &str) -> Result<String, DecodeError> {
         decode(self.charset, decode_str)
     }

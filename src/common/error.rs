@@ -6,7 +6,6 @@ pub enum EncodeError {
 }
 
 impl fmt::Display for EncodeError {
-    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             EncodeError::CharsetError => write!(
@@ -24,7 +23,6 @@ pub enum DecodeError {
 }
 
 impl fmt::Display for DecodeError {
-    #[inline]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             DecodeError::CharsetError => write!(

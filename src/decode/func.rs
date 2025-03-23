@@ -11,7 +11,7 @@ use crate::*;
 ///   the provided `charset`.
 ///
 /// # Returns
-/// Returns a `Result` containing the decodeed `String` if successful, or a `DecodeError` if the charset is invalid.
+/// Returns a `Result` containing the decoded `String` if successful, or a `DecodeError` if the charset is invalid.
 ///
 /// # Example
 /// ```
@@ -22,7 +22,6 @@ use crate::*;
 /// let decoded_str = decode(charset, encoded_str);
 /// assert_eq!(decoded_str.unwrap(), "test");
 /// ```
-#[inline]
 pub fn decode(charset: &str, decode_str: &str) -> Result<String, DecodeError> {
     if !Endecode::judge_charset_safe(charset) {
         return Err(DecodeError::CharsetError);

@@ -10,7 +10,7 @@ use crate::*;
 ///   in 3-byte chunks.
 ///
 /// # Returns
-/// Returns a `Result` containing the encodeed `String` if successful, or a `EncodeError` if the charset is invalid.
+/// Returns a `Result` containing the encoded `String` if successful, or a `EncodeError` if the charset is invalid.
 ///
 /// # Example
 /// ```
@@ -21,7 +21,6 @@ use crate::*;
 /// let encoded_str = encode(charset, original_str);
 /// assert_eq!(encoded_str.unwrap(), "aab0aabLaabZaab0");
 /// ```
-#[inline]
 pub fn encode(charset: &str, encode_str: &str) -> Result<String, EncodeError> {
     if !Endecode::judge_charset_safe(charset) {
         return Err(EncodeError::CharsetError);
