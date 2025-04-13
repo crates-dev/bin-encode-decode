@@ -9,5 +9,5 @@ pub use common::{
 pub use decode::func::*;
 pub use encode::func::*;
 
-pub(crate) use common::r#static::*;
+pub(crate) use common::r#const::*;
 pub(crate) use std::{collections::HashSet, fmt};
