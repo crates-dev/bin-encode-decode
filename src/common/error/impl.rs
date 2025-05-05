@@ -1,9 +1,4 @@
-use crate::*;
-
-#[derive(Debug, Clone)]
-pub enum EncodeError {
-    CharsetError,
-}
+use super::*;
 
 impl fmt::Display for EncodeError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -15,11 +10,6 @@ impl fmt::Display for EncodeError {
             ),
         }
     }
-}
-
-#[derive(Debug, Clone)]
-pub enum DecodeError {
-    CharsetError,
 }
 
 impl fmt::Display for DecodeError {
