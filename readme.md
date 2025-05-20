@@ -5,7 +5,7 @@
 [![](https://img.shields.io/crates/v/bin-encode-decode.svg)](https://crates.io/crates/bin-encode-decode)
 [![](https://img.shields.io/crates/d/bin-encode-decode.svg)](https://img.shields.io/crates/d/bin-encode-decode.svg)
 [![](https://docs.rs/bin-encode-decode/badge.svg)](https://docs.rs/bin-encode-decode)
-[![](https://github.com/ltpp-universe/bin-encode-decode/workflows/Rust/badge.svg)](https://github.com/ltpp-universe/bin-encode-decode/actions?query=workflow:Rust)
+[![](https://github.com/eastspire/bin-encode-decode/workflows/Rust/badge.svg)](https://github.com/eastspire/bin-encode-decode/actions?query=workflow:Rust)
 [![](https://img.shields.io/crates/l/bin-encode-decode.svg)](./LICENSE)
 
 </center>
@@ -89,4 +89,4 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Contact
 
-For any inquiries, please reach out to the author at [ltpp-universe <root@ltpp.vip>](mailto:root@ltpp.vip).
+For any inquiries, please reach out to the author at [eastspire <root@ltpp.vip>](mailto:root@ltpp.vip).
