@@ -38,7 +38,8 @@ cargo add bin-encode-decode
 
 ```rust
 use bin_encode_decode::*;
-let mut en_decode: Endecode<'_> = Endecode::new();
+
+let mut en_decode: Charset<'_> = Charset::new();
 let test_str: &str = "test";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
 en_decode.charset(&charset);
@@ -49,9 +50,10 @@ let encode: Result<String, EncodeError> = en_decode.encode(test_str);
 
 ```rust
 use bin_encode_decode::*;
+
 let test_str: &str = "test";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-let encode: Result<String, EncodeError> = encode(&charset, test_str);
+let encode: Result<String, EncodeError> = Encode::execute(&charset, test_str);
 ```
 
 ### decode
@@ -60,7 +62,8 @@ let encode: Result<String, EncodeError> = encode(&charset, test_str);
 
 ```rust
 use bin_encode_decode::*;
-let mut en_decode: Endecode<'_> = Endecode::new();
+
+let mut en_decode: Charset<'_> = Charset::new();
 let test_str: &str = "aab0aabLaabZaab0";
 let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
 en_decode.charset(&charset);
@@ -71,12 +74,13 @@ let decode: Result<String, DecodeError> = en_decode.decode(test_str);
 
 ```rust
 use bin_encode_decode::*;
+
 let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
 let encoded_str = "aab0aabLaabZaab0";
-let decoded_str = decode(charset, encoded_str);
+let decoded_str = Decode::execute(charset, encoded_str);
 let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
 let original_str = "test";
-let encoded_str = encode(charset, original_str);
+let encoded_str = Encode::execute(charset, original_str);
 ```
 
 ## License

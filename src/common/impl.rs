@@ -1,15 +1,15 @@
 use crate::*;
 
-impl<'a> Default for Endecode<'a> {
+impl<'a> Default for Charset<'a> {
     fn default() -> Self {
-        Endecode { charset: "" }
+        Charset("")
     }
 }
 
-impl<'a> Endecode<'a> {
-    /// Creates a new instance of `Endecode` with a default charset.
+impl<'a> Charset<'a> {
+    /// Creates a new instance of `Charset` with a default charset.
     pub fn new() -> Self {
-        Endecode::default()
+        Charset::default()
     }
 
     /// Checks if the `charset` contains `CHARSET_LEN` unique characters.
@@ -27,7 +27,7 @@ impl<'a> Endecode<'a> {
         true
     }
 
-    /// Sets the `charset` for the current `Endecode` instance, if it is not already set.
+    /// Sets the `charset` for the current `Charset` instance, if it is not already set.
     ///
     /// # Parameters
     /// - `charset`: A string slice representing the charset to be used.
@@ -38,10 +38,10 @@ impl<'a> Endecode<'a> {
     where
         'b: 'a,
     {
-        if self.charset != Endecode::default().charset {
+        if self.0 != Charset::default().0 {
             return self;
         }
-        self.charset = charset;
+        self.0 = charset;
         self
     }
 
@@ -53,7 +53,7 @@ impl<'a> Endecode<'a> {
     /// # Returns
     /// Returns a `Result` containing the encoded `String` if successful, or a `EncodeError` if the charset is invalid.
     pub fn encode(&self, encode_str: &str) -> Result<String, EncodeError> {
-        encode(self.charset, encode_str)
+        Encode::execute(self.0, encode_str)
     }
 
     /// decodes a string based on the current `charset`.
@@ -64,6 +64,6 @@ impl<'a> Endecode<'a> {
     /// # Returns
     /// Returns a `Result` containing the decoded `String` if successful, or a `DecodeError` if the charset is invalid.
     pub fn decode(&self, decode_str: &str) -> Result<String, DecodeError> {
-        decode(self.charset, decode_str)
+        Decode::execute(self.0, decode_str)
     }
 }

@@ -9,8 +9,6 @@
 ///
 /// # Lifetimes
 /// - `'a`: The lifetime `'a` is associated with `charset`, ensuring that the `charset` reference
-///   lives at least as long as the `Endecode` instance.
+///   lives at least as long as the `Charset` instance.
 #[derive(Debug, Clone)]
-pub struct Endecode<'a> {
-    pub(crate) charset: &'a str,
-}
+pub struct Charset<'a>(pub &'a str);

@@ -2,7 +2,7 @@ use crate::*;
 
 #[test]
 fn test_crypt_decode() {
-    let mut en_decode: Endecode<'_> = Endecode::new();
+    let mut en_decode: Charset<'_> = Charset::new();
     let test_str: &str = "test";
     let mut charset: String = String::new();
     for i in 0..26 {

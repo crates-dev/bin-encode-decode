@@ -16,6 +16,6 @@ fn test_decode() {
         charset.push(ch);
     }
     charset.push_str("_=");
-    let encode_res: Result<String, DecodeError> = decode(&charset, "aab0aabLaabZaab0");
+    let encode_res: Result<String, DecodeError> = Decode::execute(&charset, "aab0aabLaabZaab0");
     assert_eq!(encode_res.unwrap(), "test");
 }
