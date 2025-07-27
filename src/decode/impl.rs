@@ -1,28 +1,19 @@
 use crate::*;
 
 impl Decode {
-    /// decodes a given encoded string based on a specified charset, using 4-character
-    /// groups to restore the original bytes. Each character in the `decode_str` string
-    /// is mapped to an index in `charset` to form the decoded bytes.
+    /// Decodes an encoded string using specified character set.
     ///
-    /// # Parameters
-    /// - `charset`: A string representing the character set used to encode and decode
-    ///   the data. Each character should have a unique position in `charset`.
-    /// - `decode_str`: The string to be decoded, which was originally encoded with
-    ///   the provided `charset`.
+    /// Processes 4-character groups to reconstruct original bytes by mapping each
+    /// character to its position in the charset.
+    ///
+    /// # Arguments
+    ///
+    /// - `&str` - Character set used for decoding (must match encoding charset).
+    /// - `&str` - String to decode.
     ///
     /// # Returns
-    /// Returns a `Result` containing the decoded `String` if successful, or a `DecodeError` if the charset is invalid.
     ///
-    /// # Example
-    /// ```
-    /// use bin_encode_decode::*;
-    ///
-    /// let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
-    /// let encoded_str = "aab0aabLaabZaab0";
-    /// let decoded_str = Decode::execute(charset, encoded_str);
-    /// assert_eq!(decoded_str.unwrap(), "test");
-    /// ```
+    /// - `Result<String, DecodeError>` - Decoded string or error.
     pub fn execute(charset: &str, decode_str: &str) -> Result<String, DecodeError> {
         if !Charset::judge_charset_safe(charset) {
             return Err(DecodeError::CharsetError);

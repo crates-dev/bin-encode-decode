@@ -1,6 +1,18 @@
 use super::*;
 
+/// Provides display formatting for EncodeError.
+///
+/// Implements human-readable error messages for encoding failures.
 impl fmt::Display for EncodeError {
+    /// Formats the EncodeError for display purposes.
+    ///
+    /// # Arguments
+    ///
+    /// - `&mut fmt::Formatter<'_>` - Formatter to write the error message to.
+    ///
+    /// # Returns
+    ///
+    /// - `fmt::Result` - Result of the formatting operation.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             EncodeError::CharsetError => write!(
@@ -12,7 +24,19 @@ impl fmt::Display for EncodeError {
     }
 }
 
+/// Provides display formatting for DecodeError.
+///
+/// Implements human-readable error messages for decoding failures.
 impl fmt::Display for DecodeError {
+    /// Formats the DecodeError for display purposes.
+    ///
+    /// # Arguments
+    ///
+    /// - `&mut fmt::Formatter<'_>` - Formatter to write the error message to.
+    ///
+    /// # Returns
+    ///
+    /// - `fmt::Result` - Result of the formatting operation.
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             DecodeError::CharsetError => write!(

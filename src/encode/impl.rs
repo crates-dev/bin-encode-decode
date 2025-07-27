@@ -1,27 +1,19 @@
 use crate::*;
 
+/// Provides encoding functionality.
 impl Encode {
-    /// Encodes a given input string into an encoded format using a specified character set (`charset`).
-    /// This function groups bytes in chunks of 3 and maps them into 4-character segments based on `charset`.
+    /// Encodes input string using specified character set.
     ///
-    /// # Parameters
-    /// - `charset`: A string representing the character set to use for encoding. Each character
-    ///   in `charset` should have a unique position to ensure accurate encoding.
-    /// - `encode_str`: The input string to encode. It will be converted to bytes and processed
-    ///   in 3-byte chunks.
+    /// Processes 3-byte chunks to produce 4-character encoded segments.
+    ///
+    /// # Arguments
+    ///
+    /// - `&str` - Character set used for encoding (must be valid).
+    /// - `&str` - String to encode.
     ///
     /// # Returns
-    /// Returns a `Result` containing the encoded `String` if successful, or a `EncodeError` if the charset is invalid.
     ///
-    /// # Example
-    /// ```
-    /// use bin_encode_decode::*;
-    ///
-    /// let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
-    /// let original_str = "test";
-    /// let encoded_str = Encode::execute(charset, original_str);
-    /// assert_eq!(encoded_str.unwrap(), "aab0aabLaabZaab0");
-    /// ```
+    /// - `Result<String, EncodeError>` - Encoded string or error.
     pub fn execute(charset: &str, encode_str: &str) -> Result<String, EncodeError> {
         if !Charset::judge_charset_safe(charset) {
             return Err(EncodeError::CharsetError);

@@ -12,7 +12,7 @@
 
 [Official Documentation](https://docs.ltpp.vip/bin-encode-decode/)
 
-A high-performance binary encode and decode library that supports customizable character sets beyond Base64.
+> A high-performance binary encode and decode library that supports customizable character sets beyond Base64.
 
 ## Features
 

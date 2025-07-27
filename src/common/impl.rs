@@ -1,5 +1,12 @@
 use crate::*;
 
+/// Provides default implementation for Charset.
+///
+/// Creates a new Charset instance with empty string as default charset.
+///
+/// # Returns
+///
+/// - `Self` - New instance with empty charset.
 impl<'a> Default for Charset<'a> {
     fn default() -> Self {
         Charset("")
@@ -7,15 +14,28 @@ impl<'a> Default for Charset<'a> {
 }
 
 impl<'a> Charset<'a> {
-    /// Creates a new instance of `Charset` with a default charset.
+    /// Creates a new Charset instance with default charset.
+    ///
+    /// This is equivalent to calling Charset::default().
+    ///
+    /// # Returns
+    ///
+    /// - `Self` - New instance with empty charset.
     pub fn new() -> Self {
         Charset::default()
     }
 
-    /// Checks if the `charset` contains `CHARSET_LEN` unique characters.
+    /// Validates if charset meets safety requirements.
+    ///
+    /// Checks if the charset contains exactly CHARSET_LEN unique characters.
+    ///
+    /// # Arguments
+    ///
+    /// - `&str` - Character set string to validate.
     ///
     /// # Returns
-    /// Returns `true` if `charset` contains `CHARSET_LEN` unique characters, otherwise returns `false`.
+    ///
+    /// - `bool` - True if charset has exactly CHARSET_LEN unique characters.
     pub(crate) fn judge_charset_safe(charset: &str) -> bool {
         let mut hash_set: HashSet<char> = HashSet::new();
         for tmp_char in charset.chars() {
@@ -27,13 +47,17 @@ impl<'a> Charset<'a> {
         true
     }
 
-    /// Sets the `charset` for the current `Charset` instance, if it is not already set.
+    /// Sets the character set for encoding/decoding operations.
     ///
-    /// # Parameters
-    /// - `charset`: A string slice representing the charset to be used.
+    /// If charset is already set, this method does nothing.
+    ///
+    /// # Arguments
+    ///
+    /// - `&'b str` - Character set string to use.
     ///
     /// # Returns
-    /// Returns a mutable reference to `Self` for method chaining.
+    ///
+    /// - `&mut Self` - Mutable self reference for method chaining.
     pub fn charset<'b>(&mut self, charset: &'b str) -> &mut Self
     where
         'b: 'a,
@@ -45,24 +69,32 @@ impl<'a> Charset<'a> {
         self
     }
 
-    /// encodes a string based on the current `charset`.
+    /// Encodes input string using current charset.
     ///
-    /// # Parameters
-    /// - `encode_str`: The string slice to be encoded.
+    /// Performs the encoding operation with the configured character set.
+    ///
+    /// # Arguments
+    ///
+    /// - `&str` - String to encode.
     ///
     /// # Returns
-    /// Returns a `Result` containing the encoded `String` if successful, or a `EncodeError` if the charset is invalid.
+    ///
+    /// - `Result<String, EncodeError>` - Encoded string or error.
     pub fn encode(&self, encode_str: &str) -> Result<String, EncodeError> {
         Encode::execute(self.0, encode_str)
     }
 
-    /// decodes a string based on the current `charset`.
+    /// Decodes input string using current charset.
     ///
-    /// # Parameters
-    /// - `decode_str`: The string slice to be decoded.
+    /// Performs the decoding operation with the configured character set.
+    ///
+    /// # Arguments
+    ///
+    /// - `&str` - String to decode.
     ///
     /// # Returns
-    /// Returns a `Result` containing the decoded `String` if successful, or a `DecodeError` if the charset is invalid.
+    ///
+    /// - `Result<String, DecodeError>` - Decoded string or error.
     pub fn decode(&self, decode_str: &str) -> Result<String, DecodeError> {
         Decode::execute(self.0, decode_str)
     }

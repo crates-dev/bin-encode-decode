@@ -1,14 +1,13 @@
-/// Represents a struct for handling both encode and decode of strings
-/// using a custom character set (`charset`). This struct provides methods to
-/// encode and decode strings based on the provided `charset`.
+/// Handles string encoding and decoding operations.
 ///
-/// # Fields
-/// - `charset`: A reference to the character set used for encoding and decoding.
-///   Each character in the `charset` should be unique and ideally contain exactly 64 characters
-///   for base64-like encoding.
+/// Uses a custom character set for the encoding/decoding process.
 ///
-/// # Lifetimes
-/// - `'a`: The lifetime `'a` is associated with `charset`, ensuring that the `charset` reference
-///   lives at least as long as the `Charset` instance.
+/// The character set should contain unique characters and ideally have 64 characters
+/// for base64-like encoding.
 #[derive(Debug, Clone)]
-pub struct Charset<'a>(pub &'a str);
+pub struct Charset<'a>(
+    /// Reference to the character set used for encoding/decoding.
+    ///
+    /// The lifetime 'a ensures the charset reference lives as long as the Charset instance.
+    pub &'a str,
+);
