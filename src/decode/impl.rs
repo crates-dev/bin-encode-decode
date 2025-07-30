@@ -8,12 +8,12 @@ impl Decode {
     ///
     /// # Arguments
     ///
-    /// - `&str` - Character set used for decoding (must match encoding charset).
-    /// - `&str` - String to decode.
+    /// - `&str` - The character set used for decoding.
+    /// - `&str` - The string to decode.
     ///
     /// # Returns
     ///
-    /// - `Result<String, DecodeError>` - Decoded string or error.
+    /// - `Result<String, DecodeError>` - Result of decoding operation.
     pub fn execute(charset: &str, decode_str: &str) -> Result<String, DecodeError> {
         if !Charset::judge_charset_safe(charset) {
             return Err(DecodeError::CharsetError);

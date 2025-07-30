@@ -8,7 +8,7 @@ impl fmt::Display for EncodeError {
     ///
     /// # Arguments
     ///
-    /// - `&mut fmt::Formatter<'_>` - Formatter to write the error message to.
+    /// - `&mut fmt::Formatter<'_>` - The formatter to use.
     ///
     /// # Returns
     ///
@@ -32,7 +32,7 @@ impl fmt::Display for DecodeError {
     ///
     /// # Arguments
     ///
-    /// - `&mut fmt::Formatter<'_>` - Formatter to write the error message to.
+    /// - `&mut fmt::Formatter<'_>` - The formatter to use.
     ///
     /// # Returns
     ///

@@ -8,7 +8,7 @@ impl Encode {
     ///
     /// # Arguments
     ///
-    /// - `&str` - Character set used for encoding (must be valid).
+    /// - `&str` - The character set used for encoding.
     /// - `&str` - String to encode.
     ///
     /// # Returns

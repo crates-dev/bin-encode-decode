@@ -7,7 +7,5 @@
 #[derive(Debug, Clone)]
 pub struct Charset<'a>(
     /// Reference to the character set used for encoding/decoding.
-    ///
-    /// The lifetime 'a ensures the charset reference lives as long as the Charset instance.
     pub &'a str,
 );

@@ -1,4 +1,4 @@
-/// Handles the encoding operations for the application.
+/// Handles the decoding operations for the application.
 ///
-/// This struct provides methods to encode strings using a specified character set.
+/// This struct provides methods to decode strings using a specified character set.
 pub struct Decode {}
