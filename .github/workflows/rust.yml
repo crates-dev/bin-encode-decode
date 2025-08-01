@@ -158,10 +158,10 @@ jobs:
           fi
 
   create_release:
+    needs: [setup, publish_crate]
     permissions:
       contents: write
       packages: write
-    needs: [setup, publish_crate]
     if: needs.publish_crate.outputs.published == 'true' && needs.setup.outputs.tag != ''
     runs-on: ubuntu-latest
     steps:
