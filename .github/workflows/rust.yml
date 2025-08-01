@@ -16,7 +16,7 @@ jobs:
       tag: ${{ steps.read_version.outputs.tag }}
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: install_rustfmt
         uses: actions-rs/toolchain@v1
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: install_rust_toolchain
         uses: actions-rs/toolchain@v1
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: install_clippy
         uses: actions-rs/toolchain@v1
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: install_rust_toolchain
         uses: actions-rs/toolchain@v1
@@ -126,7 +126,7 @@ jobs:
       published: ${{ steps.try_publish.outputs.published }}
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: try_to_publish_crate
         id: try_publish
@@ -151,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
@@ -170,7 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout_code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: restore_toml_cli
         uses: actions/cache@v3
