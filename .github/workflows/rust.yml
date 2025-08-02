@@ -9,24 +9,24 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  setup:
+  Setup:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.read.outputs.version }}
       tag: ${{ steps.read.outputs.tag }}
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: install
+      - name: Install
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
 
-      - name: cache
+      - name: Cache
         uses: actions/cache@v3
         with:
           path: |
@@ -35,16 +35,16 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: build
+      - name: Build
         run: cargo install toml-cli
 
-      - name: save
+      - name: Save
         uses: actions/cache@v3
         with:
           path: ~/.cargo/bin/toml
           key: toml-cli-${{ runner.os }}
 
-      - name: read
+      - name: Read
         id: read
         run: |
           VERSION=$(toml get Cargo.toml package.version --raw)
@@ -56,79 +56,79 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
-  check:
-    needs: setup
+  Check:
+    needs: Setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: setup
+      - name: Setup
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt
 
-      - name: format
+      - name: Format
         run: cargo fmt -- --check
 
-  tests:
-    needs: setup
+  Tests:
+    needs: Setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: prepare
+      - name: Prepare
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
 
-      - name: test
+      - name: Test
         run: cargo test --all-features -- --nocapture
 
-  clippy:
-    needs: setup
+  Clippy:
+    needs: Setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: load
+      - name: Load
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: clippy
 
-      - name: lint
+      - name: Lint
         run: cargo clippy --all-features -- -A warnings
 
-  build:
-    needs: setup
+  Build:
+    needs: Setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: setup
+      - name: Setup
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
 
-      - name: check
+      - name: Check
         run: cargo check --release --all-features
 
-  publish:
-    needs: [setup, check, tests, clippy, build]
-    if: needs.setup.outputs.tag != ''
+  Publish:
+    needs: [Setup, Check, Tests, Clippy, Build]
+    if: needs.Setup.outputs.tag != ''
     runs-on: ubuntu-latest
     outputs:
       published: ${{ steps.publish.outputs.published }}
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: publish
+      - name: Publish
         id: publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -142,46 +142,46 @@ jobs:
             echo "❌ publish failed, but continuing."
           fi
 
-  release:
-    needs: [setup, check, tests, clippy, build]
+  Release:
+    needs: [Setup, Check, Tests, Clippy, Build]
     permissions:
       contents: write
       packages: write
-    if: needs.setup.outputs.tag != ''
+    if: needs.Setup.outputs.tag != ''
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: release
+      - name: Release
         run: |
-          gh release create "${{ needs.setup.outputs.tag }}" \
-            --title "${{ needs.setup.outputs.tag }}" \
-            --notes "Release ${{ needs.setup.outputs.tag }}" \
+          gh release create "${{ needs.Setup.outputs.tag }}" \
+            --title "${{ needs.Setup.outputs.tag }}" \
+            --notes "Release ${{ needs.Setup.outputs.tag }}" \
             --latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  notice:
-    needs: [setup, publish, release]
-    if: needs.publish.outputs.published == 'true'
+  Notice:
+    needs: [Setup, Publish, Release]
+    if: needs.Publish.outputs.published == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: restore
+      - name: Restore
         uses: actions/cache@v3
         with:
           path: ~/.cargo/bin/toml
           key: toml-cli-${{ runner.os }}
 
-      - name: output
+      - name: Output
         run: |
           PACKAGE_NAME=$(toml get Cargo.toml package.name --raw)
-          echo "✅ released version ${{ needs.setup.outputs.version }}"
+          echo "✅ released version ${{ needs.Setup.outputs.version }}"
           echo "📦 https://crates.io/crates/$PACKAGE_NAME"
-          echo "🏷️  tag: ${{ needs.setup.outputs.tag }}"
-          echo "🚀 release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.setup.outputs.tag }}"
+          echo "🏷️  tag: ${{ needs.Setup.outputs.tag }}"
+          echo "🚀 release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.Setup.outputs.tag }}"
