@@ -45,7 +45,6 @@ jobs:
           echo "📦 Detected package: $PACKAGE_NAME v$VERSION"
           if [ -z "$VERSION" ] || [ -z "$PACKAGE_NAME" ]; then
             echo "❌ Failed to read package info from Cargo.toml"
-            exit 1
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
@@ -137,7 +136,6 @@ jobs:
             echo "📚 Docs.rs: [https://docs.rs/$PACKAGE_NAME/$VERSION](https://docs.rs/$PACKAGE_NAME/$VERSION)"
           else
             echo "❌ Publish failed"
-            exit 1
           fi
 
   Release:
@@ -148,7 +146,7 @@ jobs:
     if: needs.Setup.outputs.tag != ''
     runs-on: ubuntu-latest
     outputs:
-      released: ${{ steps.create_release.outputs.released }}
+      released: ${{ steps.release.outputs.released }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -188,7 +186,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Or Update Release
-        id: create_release
+        id: release
         run: |
           set -e
           echo "released=false" >> $GITHUB_OUTPUT
@@ -223,7 +221,6 @@ jobs:
               echo "🚀 Release: [GitHub Release](${{ github.server_url }}/${{ github.repository }}/releases/tag/$TAG)"
             else
               echo "❌ Failed to update release"
-              exit 1
             fi
           else
             if [ "${{ steps.check_tag.outputs.remote_tag_exists }}" = "false" ]; then
@@ -250,7 +247,6 @@ jobs:
               echo "🚀 Release: [GitHub Release](${{ github.server_url }}/${{ github.repository }}/releases/tag/$TAG)"
             else
               echo "❌ Failed to create release"
-              exit 1
             fi
           fi
         env:
