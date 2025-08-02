@@ -215,8 +215,8 @@ jobs:
             done
             
             echo "📦 Creating source archives"
-            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip"
-            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz"
+            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip"
+            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"
             
             if gh release edit "${{ needs.setup.outputs.tag }}" \
               --title "${{ needs.setup.outputs.tag }} (Updated $(date '+%Y-%m-%d %H:%M:%S'))" \
@@ -231,8 +231,8 @@ jobs:
             📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
             📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" && \
             gh release upload "${{ needs.setup.outputs.tag }}" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz" \
               --clobber; then
               echo "released=true" >> $GITHUB_OUTPUT
               echo "✅ Updated existing GitHub release ${{ needs.setup.outputs.tag }}"
@@ -249,12 +249,12 @@ jobs:
             
             echo "🆕 Creating new release ${{ needs.setup.outputs.tag }}"
             echo "📦 Creating source archives"
-            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip"
-            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz"
+            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip"
+            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"
             
             if gh release create "${{ needs.setup.outputs.tag }}" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz" \
               --title "${{ needs.setup.outputs.tag }} (Created $(date '+%Y-%m-%d %H:%M:%S'))" \
               --notes "Release ${{ needs.setup.outputs.tag }} - Created at $(date '+%Y-%m-%d %H:%M:%S UTC')
 
