@@ -13,16 +13,16 @@ jobs:
       tag: ${{ steps.read_version.outputs.tag }}
       package_name: ${{ steps.read_version.outputs.package_name }}
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: install_rust_toolchain
+      - name: install_toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
-      - name: cache_cargo_registry
+      - name: cache_cargo
         uses: actions/cache@v3
         with:
           path: |
@@ -37,7 +37,7 @@ jobs:
         with:
           path: ~/.cargo/bin/toml
           key: toml-cli-${{ runner.os }}
-      - name: read_version_from_cargo_toml
+      - name: read_version
         id: read_version
         run: |
           VERSION=$(toml get Cargo.toml package.version --raw)
@@ -56,67 +56,67 @@ jobs:
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
           echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
 
-  check_format:
+  format:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
-      - name: install_rust_fmt
+      - name: install_fmt
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt
-      - name: run_cargo_fmt
+      - name: check_fmt
         run: cargo fmt -- --check
 
-  run_tests:
+  test:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
-      - name: install_rust_toolchain
+      - name: install_toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - name: run_cargo_tests
+      - name: run
         run: cargo test --all-features -- --nocapture
 
-  run_clippy:
+  lint:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
-      - name: install_rust_clippy
+      - name: install_clippy
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: clippy
-      - name: run_rust_clippy
+      - name: run_clippy
         run: cargo clippy --all-features -- -A warnings
 
-  build_release:
+  build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
-      - name: install_rust_toolchain
+      - name: install_toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - name: run_cargo_check
+      - name: check
         run: cargo check --release --all-features
 
-  publish_crate:
-    needs: [setup, check_format, run_tests, run_clippy, build_release]
+  publish:
+    needs: [setup, format, test, lint, build]
     runs-on: ubuntu-latest
     outputs:
       published: ${{ steps.publish.outputs.published }}
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
       - name: publish_crate
         id: publish
@@ -135,8 +135,8 @@ jobs:
             echo "❌ publish failed"
           fi
 
-  create_release:
-    needs: [setup, check_format, run_tests, run_clippy, build_release]
+  release:
+    needs: [setup, format, test, lint, build]
     permissions:
       contents: write
       packages: write
@@ -145,11 +145,11 @@ jobs:
     outputs:
       released: ${{ steps.create_release.outputs.released }}
     steps:
-      - name: checkout_code
+      - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: check_tag_exists
+      - name: check_tag
         id: check_tag
         run: |
           if git tag -l | grep -q "^${{ needs.setup.outputs.tag }}$"; then
@@ -166,7 +166,7 @@ jobs:
             echo "remote_tag_exists=false" >> $GITHUB_OUTPUT
             echo "🌐 Tag ${{ needs.setup.outputs.tag }} does not exist on remote"
           fi
-      - name: check_release_exists
+      - name: check_release
         id: check_release
         run: |
           if gh release view "${{ needs.setup.outputs.tag }}" > /dev/null 2>&1; then
@@ -178,7 +178,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: create_or_update_release
+      - name: create_or_update
         id: create_release
         run: |
           set -e
