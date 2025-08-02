@@ -1,27 +1,31 @@
 name: Rust
+
 on:
   push:
     branches: [master]
   workflow_dispatch:
+
 env:
   CARGO_TERM_COLOR: always
+
 jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.version.outputs.version }}
-      tag: ${{ steps.version.outputs.tag }}
-      package_name: ${{ steps.version.outputs.package_name }}
+      version: ${{ steps.read.outputs.version }}
+      tag: ${{ steps.read.outputs.tag }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: setup
+
+      - name: install
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt, clippy
+
       - name: cache
         uses: actions/cache@v3
         with:
@@ -30,71 +34,73 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: install
+
+      - name: build
         run: cargo install toml-cli
-      - name: cacheBin
+
+      - name: save
         uses: actions/cache@v3
         with:
           path: ~/.cargo/bin/toml
           key: toml-cli-${{ runner.os }}
-      - name: detect
-        id: detect
+
+      - name: read
+        id: read
         run: |
           VERSION=$(toml get Cargo.toml package.version --raw)
-          PACKAGE_NAME=$(toml get Cargo.toml package.name --raw)
           echo "detected version: $VERSION"
-          echo "detected package name: $PACKAGE_NAME"
           if [ -z "$VERSION" ]; then
             echo "❌ failed to read version from Cargo.toml"
             exit 1
           fi
-          if [ -z "$PACKAGE_NAME" ]; then
-            echo "❌ failed to read package name from Cargo.toml"
-            exit 1
-          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
 
-  format:
+  check:
     needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
       - name: setup
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: rustfmt
-      - name: check
+
+      - name: format
         run: cargo fmt -- --check
 
-  test:
+  tests:
     needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: setup
+
+      - name: prepare
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - name: run
+
+      - name: test
         run: cargo test --all-features -- --nocapture
 
-  lint:
+  clippy:
     needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
-      - name: setup
+
+      - name: load
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
           components: clippy
-      - name: check
+
+      - name: lint
         run: cargo clippy --all-features -- -A warnings
 
   build:
@@ -103,21 +109,25 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
       - name: setup
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
+
       - name: check
         run: cargo check --release --all-features
 
   publish:
-    needs: [setup, format, test, lint, build]
+    needs: [setup, check, tests, clippy, build]
+    if: needs.setup.outputs.tag != ''
     runs-on: ubuntu-latest
     outputs:
       published: ${{ steps.publish.outputs.published }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
       - name: publish
         id: publish
         env:
@@ -128,127 +138,50 @@ jobs:
           echo "${{ secrets.CARGO_REGISTRY_TOKEN }}" | cargo login
           if cargo publish --allow-dirty; then
             echo "published=true" >> $GITHUB_OUTPUT
-            echo "✅ published version ${{ needs.setup.outputs.version }} to crates.io"
-            echo "📦 https://crates.io/crates/${{ needs.setup.outputs.package_name }}"
-            echo "📚 https://docs.rs/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }}/"
           else
-            echo "❌ publish failed"
+            echo "❌ publish failed, but continuing."
           fi
 
   release:
-    needs: [setup, format, test, lint, build]
+    needs: [setup, check, tests, clippy, build]
     permissions:
       contents: write
       packages: write
     if: needs.setup.outputs.tag != ''
     runs-on: ubuntu-latest
-    outputs:
-      released: ${{ steps.release.outputs.released }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: verify
-        id: verify
-        run: |
-          if git tag -l | grep -q "^${{ needs.setup.outputs.tag }}$"; then
-            echo "tag_exists=true" >> $GITHUB_OUTPUT
-            echo "🏷️  Tag ${{ needs.setup.outputs.tag }} already exists locally"
-          else
-            echo "tag_exists=false" >> $GITHUB_OUTPUT
-            echo "🏷️  Tag ${{ needs.setup.outputs.tag }} does not exist locally"
-          fi
-          if git ls-remote --tags origin | grep -q "refs/tags/${{ needs.setup.outputs.tag }}$"; then
-            echo "remote_tag_exists=true" >> $GITHUB_OUTPUT
-            echo "🌐 Tag ${{ needs.setup.outputs.tag }} already exists on remote"
-          else
-            echo "remote_tag_exists=false" >> $GITHUB_OUTPUT
-            echo "🌐 Tag ${{ needs.setup.outputs.tag }} does not exist on remote"
-          fi
-      - name: inspect
-        id: inspect
-        run: |
-          if gh release view "${{ needs.setup.outputs.tag }}" > /dev/null 2>&1; then
-            echo "release_exists=true" >> $GITHUB_OUTPUT
-            echo "📦 Release ${{ needs.setup.outputs.tag }} already exists"
-          else
-            echo "release_exists=false" >> $GITHUB_OUTPUT
-            echo "📦 Release ${{ needs.setup.outputs.tag }} does not exist"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: release
-        id: release
         run: |
-          set -e
-          echo "released=false" >> $GITHUB_OUTPUT
-          if [ "${{ steps.inspect.outputs.release_exists }}" = "true" ]; then
-            echo "🔄 Updating existing release ${{ needs.setup.outputs.tag }}"
-            gh release view "${{ needs.setup.outputs.tag }}" --json assets --jq '.assets[].name' | while read asset; do
-              if [ -n "$asset" ]; then
-                echo "🗑️  Deleting existing asset: $asset"
-                gh release delete-asset "${{ needs.setup.outputs.tag }}" "$asset" --yes || true
-              fi
-            done
-            echo "📦 Creating source archives"
-            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip"
-            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"
-            if gh release edit "${{ needs.setup.outputs.tag }}" \
-              --title "${{ needs.setup.outputs.tag }} (Updated $(date '+%Y-%m-%d %H:%M:%S'))" \
-              --notes "Release ${{ needs.setup.outputs.tag }} - Updated at $(date '+%Y-%m-%d %H:%M:%S UTC')
-            ## Changes
-            - Automated release update from CI/CD pipeline
-            - Version: ${{ needs.setup.outputs.version }}
-            - Package: ${{ needs.setup.outputs.package_name }}
-            ## Links
-            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
-            📚 [Documentation on docs.rs](https://docs.rs/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }}/)
-            📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" && \
-            gh release upload "${{ needs.setup.outputs.tag }}" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz" \
-              --clobber; then
-              echo "released=true" >> $GITHUB_OUTPUT
-              echo "✅ Updated existing GitHub release ${{ needs.setup.outputs.tag }}"
-              echo "📦 Uploaded source archives"
-            else
-              echo "❌ Failed to update existing GitHub release"
-            fi
-          else
-            if [ "${{ steps.verify.outputs.remote_tag_exists }}" = "false" ]; then
-              echo "🏷️  Creating new tag ${{ needs.setup.outputs.tag }}"
-              git tag "${{ needs.setup.outputs.tag }}"
-              git push origin "${{ needs.setup.outputs.tag }}"
-            fi
-            echo "🆕 Creating new release ${{ needs.setup.outputs.tag }}"
-            echo "📦 Creating source archives"
-            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip"
-            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"
-            if gh release create "${{ needs.setup.outputs.tag }}" \
-              --title "${{ needs.setup.outputs.tag }} (Created $(date '+%Y-%m-%d %H:%M:%S'))" \
-              --notes "Release ${{ needs.setup.outputs.tag }} - Created at $(date '+%Y-%m-%d %H:%M:%S UTC')
-            ## Changes
-            - Version: ${{ needs.setup.outputs.version }}
-            - Package: ${{ needs.setup.outputs.package_name }}
-            ## Links
-            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
-            📚 [Documentation on docs.rs](https://docs.rs/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }}/)
-            📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" \
-              --latest && \
-            gh release upload "${{ needs.setup.outputs.tag }}" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"; then
-              echo "released=true" >> $GITHUB_OUTPUT
-              echo "✅ Created new GitHub release ${{ needs.setup.outputs.tag }}"
-              echo "📦 Uploaded source archives"
-            else
-              echo "❌ Failed to create new GitHub release"
-            fi
-          fi
-          if [ "${{ steps.release.outputs.released }}" = "true" ]; then
-            echo "🏷️  Tag: ${{ needs.setup.outputs.tag }}"
-            echo "🚀 Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.setup.outputs.tag }}"
-          fi
+          gh release create "${{ needs.setup.outputs.tag }}" \
+            --title "${{ needs.setup.outputs.tag }}" \
+            --notes "Release ${{ needs.setup.outputs.tag }}" \
+            --latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notice:
+    needs: [setup, publish, release]
+    if: needs.publish.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: restore
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/bin/toml
+          key: toml-cli-${{ runner.os }}
+
+      - name: output
+        run: |
+          PACKAGE_NAME=$(toml get Cargo.toml package.name --raw)
+          echo "✅ released version ${{ needs.setup.outputs.version }}"
+          echo "📦 https://crates.io/crates/$PACKAGE_NAME"
+          echo "🏷️  tag: ${{ needs.setup.outputs.tag }}"
+          echo "🚀 release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.setup.outputs.tag }}"
