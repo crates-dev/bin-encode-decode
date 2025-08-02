@@ -148,11 +148,11 @@ jobs:
             echo "✅ published version ${{ needs.setup.outputs.version }} to crates.io"
             echo "📦 https://crates.io/crates/${{ needs.setup.outputs.package_name }}"
           else
-            echo "❌ publish failed."
+            echo "❌ publish failed"
           fi
 
   create_release:
-    needs: [setup]
+    needs: [setup, check_format, run_tests, run_clippy, build_release]
     permissions:
       contents: write
       packages: write
@@ -166,21 +166,94 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: create_github_release
+      - name: check_if_tag_exists
+        id: check_tag
+        run: |
+          if git tag -l | grep -q "^${{ needs.setup.outputs.tag }}$"; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "🏷️  Tag ${{ needs.setup.outputs.tag }} already exists locally"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "🏷️  Tag ${{ needs.setup.outputs.tag }} does not exist locally"
+          fi
+
+          if git ls-remote --tags origin | grep -q "refs/tags/${{ needs.setup.outputs.tag }}$"; then
+            echo "remote_tag_exists=true" >> $GITHUB_OUTPUT
+            echo "🌐 Tag ${{ needs.setup.outputs.tag }} already exists on remote"
+          else
+            echo "remote_tag_exists=false" >> $GITHUB_OUTPUT
+            echo "🌐 Tag ${{ needs.setup.outputs.tag }} does not exist on remote"
+          fi
+
+      - name: check_if_release_exists
+        id: check_release
+        run: |
+          if gh release view "${{ needs.setup.outputs.tag }}" > /dev/null 2>&1; then
+            echo "release_exists=true" >> $GITHUB_OUTPUT
+            echo "📦 Release ${{ needs.setup.outputs.tag }} already exists"
+          else
+            echo "release_exists=false" >> $GITHUB_OUTPUT
+            echo "📦 Release ${{ needs.setup.outputs.tag }} does not exist"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: create_or_update_release
         id: create_release
         run: |
           set -e
           echo "released=false" >> $GITHUB_OUTPUT
-          if gh release create "${{ needs.setup.outputs.tag }}" \
-            --title "${{ needs.setup.outputs.tag }}" \
-            --notes "Release ${{ needs.setup.outputs.tag }}" \
-            --latest; then
-            echo "released=true" >> $GITHUB_OUTPUT
-            echo "✅ created GitHub release ${{ needs.setup.outputs.tag }}"
-            echo "🏷️  tag: ${{ needs.setup.outputs.tag }}"
-            echo "🚀 release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.setup.outputs.tag }}"
+
+          if [ "${{ steps.check_release.outputs.release_exists }}" = "true" ]; then
+            echo "🔄 Updating existing release ${{ needs.setup.outputs.tag }}"
+            if gh release edit "${{ needs.setup.outputs.tag }}" \
+              --title "${{ needs.setup.outputs.tag }} (Updated $(date '+%Y-%m-%d %H:%M:%S'))" \
+              --notes "Release ${{ needs.setup.outputs.tag }} - Updated at $(date '+%Y-%m-%d %H:%M:%S UTC')
+
+            ## Changes
+            - Automated release update from CI/CD pipeline
+            - Version: ${{ needs.setup.outputs.version }}
+            - Package: ${{ needs.setup.outputs.package_name }}
+            
+            ## Links
+            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }})
+            📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})"; then
+              echo "released=true" >> $GITHUB_OUTPUT
+              echo "✅ Updated existing GitHub release ${{ needs.setup.outputs.tag }}"
+            else
+              echo "❌ Failed to update existing GitHub release"
+            fi
           else
-            echo "❌ GitHub release creation failed."
+            if [ "${{ steps.check_tag.outputs.remote_tag_exists }}" = "false" ]; then
+              echo "🏷️  Creating new tag ${{ needs.setup.outputs.tag }}"
+              git tag "${{ needs.setup.outputs.tag }}"
+              git push origin "${{ needs.setup.outputs.tag }}"
+            fi
+            
+            echo "🆕 Creating new release ${{ needs.setup.outputs.tag }}"
+            if gh release create "${{ needs.setup.outputs.tag }}" \
+              --title "${{ needs.setup.outputs.tag }} (Created $(date '+%Y-%m-%d %H:%M:%S'))" \
+              --notes "Release ${{ needs.setup.outputs.tag }} - Created at $(date '+%Y-%m-%d %H:%M:%S UTC')
+
+            ## Changes
+            - Initial release from CI/CD pipeline
+            - Version: ${{ needs.setup.outputs.version }}
+            - Package: ${{ needs.setup.outputs.package_name }}
+            
+            ## Links
+            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }})
+            📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" \
+              --latest; then
+              echo "released=true" >> $GITHUB_OUTPUT
+              echo "✅ Created new GitHub release ${{ needs.setup.outputs.tag }}"
+            else
+              echo "❌ Failed to create new GitHub release"
+            fi
+          fi
+
+          if [ "${{ steps.create_release.outputs.released }}" = "true" ]; then
+            echo "🏷️  Tag: ${{ needs.setup.outputs.tag }}"
+            echo "🚀 Release: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.setup.outputs.tag }}"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
