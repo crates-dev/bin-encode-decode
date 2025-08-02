@@ -147,6 +147,7 @@ jobs:
             echo "published=true" >> $GITHUB_OUTPUT
             echo "✅ published version ${{ needs.setup.outputs.version }} to crates.io"
             echo "📦 https://crates.io/crates/${{ needs.setup.outputs.package_name }}"
+            echo "📚 https://docs.rs/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }}/"
           else
             echo "❌ publish failed"
           fi
@@ -166,7 +167,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: check_if_tag_exists
+      - name: check_tag_exists
         id: check_tag
         run: |
           if git tag -l | grep -q "^${{ needs.setup.outputs.tag }}$"; then
@@ -185,7 +186,7 @@ jobs:
             echo "🌐 Tag ${{ needs.setup.outputs.tag }} does not exist on remote"
           fi
 
-      - name: check_if_release_exists
+      - name: check_release_exists
         id: check_release
         run: |
           if gh release view "${{ needs.setup.outputs.tag }}" > /dev/null 2>&1; then
@@ -198,7 +199,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: create_or_update_release
+      - name: handle_release
         id: create_release
         run: |
           set -e
@@ -229,6 +230,7 @@ jobs:
             
             ## Links
             📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
+            📚 [Documentation on docs.rs](https://docs.rs/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }}/)
             📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" && \
             gh release upload "${{ needs.setup.outputs.tag }}" \
               "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
@@ -253,20 +255,21 @@ jobs:
             git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"
             
             if gh release create "${{ needs.setup.outputs.tag }}" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
-              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz" \
               --title "${{ needs.setup.outputs.tag }} (Created $(date '+%Y-%m-%d %H:%M:%S'))" \
               --notes "Release ${{ needs.setup.outputs.tag }} - Created at $(date '+%Y-%m-%d %H:%M:%S UTC')
 
             ## Changes
-            - Initial release from CI/CD pipeline
             - Version: ${{ needs.setup.outputs.version }}
             - Package: ${{ needs.setup.outputs.package_name }}
             
             ## Links
             📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
+            📚 [Documentation on docs.rs](https://docs.rs/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }}/)
             📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" \
-              --latest; then
+              --latest && \
+            gh release upload "${{ needs.setup.outputs.tag }}" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.zip" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}.tar.gz"; then
               echo "released=true" >> $GITHUB_OUTPUT
               echo "✅ Created new GitHub release ${{ needs.setup.outputs.tag }}"
               echo "📦 Uploaded source archives"
