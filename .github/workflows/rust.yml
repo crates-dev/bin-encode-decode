@@ -206,6 +206,18 @@ jobs:
 
           if [ "${{ steps.check_release.outputs.release_exists }}" = "true" ]; then
             echo "🔄 Updating existing release ${{ needs.setup.outputs.tag }}"
+            
+            gh release view "${{ needs.setup.outputs.tag }}" --json assets --jq '.assets[].name' | while read asset; do
+              if [ -n "$asset" ]; then
+                echo "🗑️  Deleting existing asset: $asset"
+                gh release delete-asset "${{ needs.setup.outputs.tag }}" "$asset" --yes || true
+              fi
+            done
+            
+            echo "📦 Creating source archives"
+            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip"
+            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz"
+            
             if gh release edit "${{ needs.setup.outputs.tag }}" \
               --title "${{ needs.setup.outputs.tag }} (Updated $(date '+%Y-%m-%d %H:%M:%S'))" \
               --notes "Release ${{ needs.setup.outputs.tag }} - Updated at $(date '+%Y-%m-%d %H:%M:%S UTC')
@@ -216,10 +228,15 @@ jobs:
             - Package: ${{ needs.setup.outputs.package_name }}
             
             ## Links
-            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }})
-            📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})"; then
+            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
+            📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" && \
+            gh release upload "${{ needs.setup.outputs.tag }}" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz" \
+              --clobber; then
               echo "released=true" >> $GITHUB_OUTPUT
               echo "✅ Updated existing GitHub release ${{ needs.setup.outputs.tag }}"
+              echo "📦 Uploaded source archives"
             else
               echo "❌ Failed to update existing GitHub release"
             fi
@@ -231,7 +248,13 @@ jobs:
             fi
             
             echo "🆕 Creating new release ${{ needs.setup.outputs.tag }}"
+            echo "📦 Creating source archives"
+            git archive --format=zip --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip"
+            git archive --format=tar.gz --prefix="${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}/" HEAD > "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz"
+            
             if gh release create "${{ needs.setup.outputs.tag }}" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.zip" \
+              "${{ needs.setup.outputs.package_name }}-${{ needs.setup.outputs.version }}-source.tar.gz" \
               --title "${{ needs.setup.outputs.tag }} (Created $(date '+%Y-%m-%d %H:%M:%S'))" \
               --notes "Release ${{ needs.setup.outputs.tag }} - Created at $(date '+%Y-%m-%d %H:%M:%S UTC')
 
@@ -241,11 +264,12 @@ jobs:
             - Package: ${{ needs.setup.outputs.package_name }}
             
             ## Links
-            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }})
+            📦 [Crate on crates.io](https://crates.io/crates/${{ needs.setup.outputs.package_name }}/${{ needs.setup.outputs.version }})
             📋 [Commit History](https://github.com/${{ github.repository }}/commits/${{ needs.setup.outputs.tag }})" \
               --latest; then
               echo "released=true" >> $GITHUB_OUTPUT
               echo "✅ Created new GitHub release ${{ needs.setup.outputs.tag }}"
+              echo "📦 Uploaded source archives"
             else
               echo "❌ Failed to create new GitHub release"
             fi
