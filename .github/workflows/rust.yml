@@ -55,7 +55,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: setup rust
+      - name: Setup rust
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
@@ -96,11 +96,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: setup build
+      - name: Setup build
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - name: build release
+      - name: Build release
         run: cargo check --release --all-features
 
   publish:
@@ -117,7 +117,7 @@ jobs:
         with:
           path: ~/.cargo/bin/toml
           key: toml-cli-${{ runner.os }}
-      - name: publish to crates.io
+      - name: Publish to crates.io
         id: publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -155,7 +155,7 @@ jobs:
         id: package_info
         run: |
           echo "package_name=${{ needs.setup.outputs.package_name }}" >> $GITHUB_OUTPUT
-      - name: check tag status
+      - name: Check tag status
         id: check_tag
         run: |
           if git tag -l | grep -q "^${{ needs.setup.outputs.tag }}$"; then
@@ -172,7 +172,7 @@ jobs:
             echo "remote_tag_exists=false" >> $GITHUB_OUTPUT
             echo "🌐 Tag ${{ needs.setup.outputs.tag }} does not exist on remote"
           fi
-      - name: check release status
+      - name: Check release status
         id: check_release
         run: |
           if gh release view "${{ needs.setup.outputs.tag }}" > /dev/null 2>&1; then
