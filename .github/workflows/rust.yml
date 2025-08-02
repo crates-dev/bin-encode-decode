@@ -2,11 +2,10 @@ name: Rust
 on:
   push:
     branches: [master]
-  workflow_dispatch:
 env:
   CARGO_TERM_COLOR: always
 jobs:
-  Setup:
+  setup:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.read.outputs.version }}
@@ -50,13 +49,13 @@ jobs:
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
           echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
 
-  Check:
-    needs: Setup
+  check:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup rust
+      - name: setup rust
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
@@ -64,8 +63,8 @@ jobs:
       - name: Format check
         run: cargo fmt -- --check
 
-  Tests:
-    needs: Setup
+  tests:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -77,8 +76,8 @@ jobs:
       - name: Run tests
         run: cargo test --all-features -- --nocapture
 
-  Clippy:
-    needs: Setup
+  clippy:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -91,22 +90,22 @@ jobs:
       - name: Run clippy
         run: cargo clippy --all-features -- -A warnings
 
-  Build:
-    needs: Setup
+  build:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup build
+      - name: setup build
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
-      - name: Build release
+      - name: build release
         run: cargo check --release --all-features
 
-  Publish:
-    needs: [Setup, Check, Tests, Clippy, Build]
-    if: needs.Setup.outputs.tag != ''
+  publish:
+    needs: [setup, check, tests, clippy, build]
+    if: needs.setup.outputs.tag != ''
     runs-on: ubuntu-latest
     outputs:
       published: ${{ steps.publish.outputs.published }}
@@ -118,7 +117,7 @@ jobs:
         with:
           path: ~/.cargo/bin/toml
           key: toml-cli-${{ runner.os }}
-      - name: Publish to crates.io
+      - name: publish to crates.io
         id: publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
@@ -127,7 +126,7 @@ jobs:
           echo "published=false" >> $GITHUB_OUTPUT
           echo "${{ secrets.CARGO_REGISTRY_TOKEN }}" | cargo login
           PACKAGE_NAME=$(toml get Cargo.toml package.name --raw)
-          VERSION=${{ needs.Setup.outputs.version }}
+          VERSION=${{ needs.setup.outputs.version }}
           if cargo publish --allow-dirty; then
             echo "published=true" >> $GITHUB_OUTPUT
             echo "🎉🎉🎉 PUBLISH SUCCESSFUL 🎉🎉🎉"
@@ -138,12 +137,12 @@ jobs:
             echo "❌ Publish failed"
           fi
 
-  Release:
-    needs: [Setup, Check, Tests, Clippy, Build]
+  release:
+    needs: [setup, check, tests, clippy, build]
     permissions:
       contents: write
       packages: write
-    if: needs.Setup.outputs.tag != ''
+    if: needs.setup.outputs.tag != ''
     runs-on: ubuntu-latest
     outputs:
       released: ${{ steps.release.outputs.released }}
@@ -155,33 +154,33 @@ jobs:
       - name: Get package name
         id: package_info
         run: |
-          echo "package_name=${{ needs.Setup.outputs.package_name }}" >> $GITHUB_OUTPUT
-      - name: Check tag status
+          echo "package_name=${{ needs.setup.outputs.package_name }}" >> $GITHUB_OUTPUT
+      - name: check tag status
         id: check_tag
         run: |
-          if git tag -l | grep -q "^${{ needs.Setup.outputs.tag }}$"; then
+          if git tag -l | grep -q "^${{ needs.setup.outputs.tag }}$"; then
             echo "tag_exists=true" >> $GITHUB_OUTPUT
-            echo "🏷️ Tag ${{ needs.Setup.outputs.tag }} exists locally"
+            echo "🏷️ Tag ${{ needs.setup.outputs.tag }} exists locally"
           else
             echo "tag_exists=false" >> $GITHUB_OUTPUT
-            echo "🏷️ Tag ${{ needs.Setup.outputs.tag }} does not exist locally"
+            echo "🏷️ Tag ${{ needs.setup.outputs.tag }} does not exist locally"
           fi
-          if git ls-remote --tags origin | grep -q "refs/tags/${{ needs.Setup.outputs.tag }}$"; then
+          if git ls-remote --tags origin | grep -q "refs/tags/${{ needs.setup.outputs.tag }}$"; then
             echo "remote_tag_exists=true" >> $GITHUB_OUTPUT
-            echo "🌐 Tag ${{ needs.Setup.outputs.tag }} exists on remote"
+            echo "🌐 Tag ${{ needs.setup.outputs.tag }} exists on remote"
           else
             echo "remote_tag_exists=false" >> $GITHUB_OUTPUT
-            echo "🌐 Tag ${{ needs.Setup.outputs.tag }} does not exist on remote"
+            echo "🌐 Tag ${{ needs.setup.outputs.tag }} does not exist on remote"
           fi
-      - name: Check release status
+      - name: check release status
         id: check_release
         run: |
-          if gh release view "${{ needs.Setup.outputs.tag }}" > /dev/null 2>&1; then
+          if gh release view "${{ needs.setup.outputs.tag }}" > /dev/null 2>&1; then
             echo "release_exists=true" >> $GITHUB_OUTPUT
-            echo "📦 Release ${{ needs.Setup.outputs.tag }} already exists"
+            echo "📦 Release ${{ needs.setup.outputs.tag }} already exists"
           else
             echo "release_exists=false" >> $GITHUB_OUTPUT
-            echo "📦 Release ${{ needs.Setup.outputs.tag }} does not exist"
+            echo "📦 Release ${{ needs.setup.outputs.tag }} does not exist"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -191,8 +190,8 @@ jobs:
           set -e
           echo "released=false" >> $GITHUB_OUTPUT
           PACKAGE_NAME="${{ steps.package_info.outputs.package_name }}"
-          VERSION="${{ needs.Setup.outputs.version }}"
-          TAG="${{ needs.Setup.outputs.tag }}"
+          VERSION="${{ needs.setup.outputs.version }}"
+          TAG="${{ needs.setup.outputs.tag }}"
           echo "📦 Building source archives..."
           git archive --format=zip --prefix="${PACKAGE_NAME}-${VERSION}/" HEAD > "${PACKAGE_NAME}-${VERSION}.zip"
           git archive --format=tar.gz --prefix="${PACKAGE_NAME}-${VERSION}/" HEAD > "${PACKAGE_NAME}-${VERSION}.tar.gz"
@@ -231,7 +230,7 @@ jobs:
             echo "🆕 Creating new release: $TAG"
             if gh release create "$TAG" \
               --title "$TAG (Created $(date '+%Y-%m-%d %H:%M:%S'))" \
-              --notes "Release $TAG - First published at $(date '+%Y-%m-%d %H:%M:%S UTC')
+              --notes "Release $TAG - Created at $(date '+%Y-%m-%d %H:%M:%S UTC')
             ## Changes
             - Version: $VERSION
             - Package: $PACKAGE_NAME
