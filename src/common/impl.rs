@@ -19,7 +19,7 @@ impl<'a> Charset<'a> {
     /// # Returns
     ///
     /// - `Charset<'a>` - New instance with empty charset.
-    #[inline(always)]
+    #[inline]
     pub fn new() -> Self {
         Charset::default()
     }
