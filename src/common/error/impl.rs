@@ -17,8 +17,7 @@ impl fmt::Display for EncodeError {
         match self {
             EncodeError::CharsetError => write!(
                 f,
-                "EncodeError: Charset is invalid. Please ensure the charset contains exactly {} unique characters.",
-                CHARSET_LEN
+                "EncodeError: Charset is invalid. Please ensure the charset contains exactly {CHARSET_LEN} unique characters."
             ),
         }
     }
@@ -41,8 +40,7 @@ impl fmt::Display for DecodeError {
         match self {
             DecodeError::CharsetError => write!(
                 f,
-                "DecodeError: Charset is invalid. Please ensure the charset contains exactly {} unique characters.",
-                CHARSET_LEN
+                "DecodeError: Charset is invalid. Please ensure the charset contains exactly {CHARSET_LEN} unique characters."
             ),
         }
     }
