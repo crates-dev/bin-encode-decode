@@ -13,6 +13,7 @@ impl fmt::Display for EncodeError {
     /// # Returns
     ///
     /// - `fmt::Result` - Result of the formatting operation.
+    #[inline(always)]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             EncodeError::CharsetError => write!(
@@ -36,6 +37,7 @@ impl fmt::Display for DecodeError {
     /// # Returns
     ///
     /// - `fmt::Result` - Result of the formatting operation.
+    #[inline(always)]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             DecodeError::CharsetError => write!(

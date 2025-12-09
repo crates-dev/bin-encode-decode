@@ -8,6 +8,7 @@ use crate::*;
 ///
 /// - `Charset<'a>` - New instance with empty charset.
 impl<'a> Default for Charset<'a> {
+    #[inline(always)]
     fn default() -> Self {
         Charset("")
     }
@@ -19,7 +20,7 @@ impl<'a> Charset<'a> {
     /// # Returns
     ///
     /// - `Charset<'a>` - New instance with empty charset.
-    #[inline]
+    #[inline(always)]
     pub fn new() -> Self {
         Charset::default()
     }
