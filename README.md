@@ -30,59 +30,6 @@ To install `bin-encode-decode` run cmd:
 cargo add bin-encode-decode
 ```
 
-## Usage
-
-### encode
-
-#### Use Struct
-
-```rust
-use bin_encode_decode::*;
-
-let mut en_decode: Charset<'_> = Charset::new();
-let test_str: &str = "test";
-let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-en_decode.charset(&charset);
-let encode: Result<String, EncodeError> = en_decode.encode(test_str);
-```
-
-#### Use Function
-
-```rust
-use bin_encode_decode::*;
-
-let test_str: &str = "test";
-let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-let encode: Result<String, EncodeError> = Encode::execute(&charset, test_str);
-```
-
-### decode
-
-#### Use Struct
-
-```rust
-use bin_encode_decode::*;
-
-let mut en_decode: Charset<'_> = Charset::new();
-let test_str: &str = "aab0aabLaabZaab0";
-let mut charset: String = String::from("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=");
-en_decode.charset(&charset);
-let decode: Result<String, DecodeError> = en_decode.decode(test_str);
-```
-
-#### Use Function
-
-```rust
-use bin_encode_decode::*;
-
-let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
-let encoded_str = "aab0aabLaabZaab0";
-let decoded_str = Decode::execute(charset, encoded_str);
-let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_=";
-let original_str = "test";
-let encoded_str = Encode::execute(charset, original_str);
-```
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

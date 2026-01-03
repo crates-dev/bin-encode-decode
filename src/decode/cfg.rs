@@ -4,15 +4,15 @@ use crate::*;
 fn test_decode() {
     let mut charset: String = String::new();
     for i in 0..26 {
-        let ch: char = ('a' as u8 + i) as char;
+        let ch: char = (b'a' + i) as char;
         charset.push(ch);
     }
     for i in 0..26 {
-        let ch: char = ('A' as u8 + i) as char;
+        let ch: char = (b'A' + i) as char;
         charset.push(ch);
     }
     for i in 0..10 {
-        let ch: char = ('0' as u8 + i) as char;
+        let ch: char = (b'0' + i) as char;
         charset.push(ch);
     }
     charset.push_str("_=");
