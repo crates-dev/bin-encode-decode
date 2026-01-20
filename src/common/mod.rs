@@ -5,5 +5,7 @@ pub(crate) mod r#struct;
 
 pub use {error::*, r#struct::*};
 
+pub(crate) use r#const::*;
+
 #[cfg(test)]
 mod test;
