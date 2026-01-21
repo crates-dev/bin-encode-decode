@@ -1,9 +1,9 @@
-pub(crate) mod r#const;
-pub(crate) mod error;
-pub(crate) mod r#impl;
-pub(crate) mod r#struct;
+mod r#const;
+mod r#enum;
+mod r#impl;
+mod r#struct;
 
-pub use {error::*, r#struct::*};
+pub use {r#enum::*, r#struct::*};
 
 pub(crate) use r#const::*;
 
