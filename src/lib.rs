@@ -9,4 +9,4 @@ pub(crate) mod encode;
 
 pub use {common::*, decode::*, encode::*};
 
-pub(crate) use std::{collections::HashSet, fmt};
+use std::{collections::HashSet, fmt};
