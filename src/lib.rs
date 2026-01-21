@@ -3,9 +3,9 @@
 //! A high-performance binary encode and decode library
 //! that supports customizable character sets beyond Base64.
 
-pub(crate) mod common;
-pub(crate) mod decode;
-pub(crate) mod encode;
+mod common;
+mod decode;
+mod encode;
 
 pub use {common::*, decode::*, encode::*};
 
