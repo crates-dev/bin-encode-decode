@@ -12,6 +12,8 @@
 
 [Official Documentation](https://docs.ltpp.vip/bin-encode-decode/)
 
+[Api Docs](https://docs.rs/bin-encode-decode/latest/)
+
 > A high-performance binary encode and decode library that supports customizable character sets beyond Base64.
 
 ## Features
