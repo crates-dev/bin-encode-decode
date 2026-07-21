@@ -1,4 +1,4 @@
-use crate::*;
+use super::*;
 
 impl Decode {
     /// Decodes an encoded string using specified character set.
@@ -21,7 +21,7 @@ impl Decode {
         let mut buffer: Vec<u8> = Vec::new();
         let mut decoded: Vec<u8> = Vec::new();
         for ch in decode_str.chars() {
-            if let Some(idx) = charset.chars().position(|c| c == ch) {
+            if let Some(idx) = charset.chars().position(|character: char| character == ch) {
                 buffer.push(idx as u8);
             }
             if buffer.len() == 4 {
